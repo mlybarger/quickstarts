@@ -1,61 +1,102 @@
-<?xml version="1.0" encoding="UTF-8"?><switchyard xmlns="urn:switchyard-config:switchyard:1.0" name="switchyard-quickstart-jca-outbound-activemq">
-    <composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="jca-outbound-activemq" targetNamespace="urn:switchyard-quickstart:jca-outbound-activemq:0.1.0">
-        <sca:service xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="OrderService" promote="OrderService/OrderService">
-           <binding.jca xmlns="urn:switchyard-component-jca:config:1.0">
-               <operationSelector xmlns="urn:switchyard-config:switchyard:1.0" operationName="process"/>
-               <inboundConnection>
-                   <resourceAdapter name="activemq-ra.rar"/>
-                   <activationSpec>
-                       <property name="destinationType" value="javax.jms.Queue"/>
-                       <property name="destination" value="OrderQueue"/>
-                   </activationSpec>
-               </inboundConnection>
-               <inboundInteraction>
-                   <listener>javax.jms.MessageListener</listener>
-                   <endpoint type="org.switchyard.component.jca.endpoint.JMSEndpoint"/>
-                   <transacted>true</transacted>
-               </inboundInteraction>
-           </binding.jca>
-        </sca:service>
-        <sca:reference xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" multiplicity="1..1" name="ShippingReference" promote="OrderService/ShippingReference">
-            <binding.jca xmlns="urn:switchyard-component-jca:config:1.0">
-                <outboundConnection>
-                    <resourceAdapter name="activemq-ra.rar"/>
-                    <connection jndiName="java:/JmsXA"/>
-                </outboundConnection>
-                <outboundInteraction>
-                    <processor type="org.switchyard.component.jca.processor.JMSProcessor">
-                        <property name="messageType" value="Text" />
-                        <property name="destination" value="ShippingQueue"/>
-                    </processor>
-                </outboundInteraction>
-            </binding.jca>
-        </sca:reference>
-        <sca:reference xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" multiplicity="1..1" name="FillingStockReference" promote="OrderService/FillingStockReference">
-            <binding.jca xmlns="urn:switchyard-component-jca:config:1.0">
-                <outboundConnection>
-                    <resourceAdapter name="activemq-ra.rar"/>
-                    <connection jndiName="java:/JmsXA"/>
-                </outboundConnection>
-                <outboundInteraction>
-                    <processor type="org.switchyard.component.jca.processor.JMSProcessor">
-                        <property name="messageType" value="Text" />
-                        <property name="destination" value="FillingStockQueue"/>
-                    </processor>
-                </outboundInteraction>
-            </binding.jca>
-        </sca:reference>
-        <component name="OrderService">
-            <implementation.bean xmlns="urn:switchyard-component-bean:config:1.0" class="org.switchyard.quickstarts.jca.outbound.OrderServiceBean"/>
-            <service name="OrderService">
-                <interface.java interface="org.switchyard.quickstarts.jca.outbound.OrderService"/>
-            </service>
-            <reference name="ShippingReference">
-                <interface.java interface="org.switchyard.quickstarts.jca.outbound.OrderService"/>
-            </reference>
-            <reference name="FillingStockReference">
-                <interface.java interface="org.switchyard.quickstarts.jca.outbound.OrderService"/>
-            </reference>
-        </component>
-    </composite>
+<?xml version="1.0" encoding="UTF-8"?>
+<switchyard xmlns="urn:switchyard-config:switchyard:1.0" xmlns:bean="urn:switchyard-component-bean:config:1.0" xmlns:jca="urn:switchyard-component-jca:config:1.0" xmlns:jms="urn:switchyard-component-camel-jms:config:1.0" xmlns:resteasy="urn:switchyard-component-resteasy:config:1.0" xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="switchyard-quickstart-jca-outbound-activemq">
+  <sca:composite name="jca-outbound-activemq" targetNamespace="urn:switchyard-quickstart:jca-outbound-activemq:0.1.0">
+    <sca:service name="OrderService" promote="OrderService/OrderService">
+      <jca:binding.jca name="Foo">
+        <operationSelector operationName="process"/>
+        <jca:inboundConnection>
+          <jca:resourceAdapter name="activemq-rar-5.9.0.redhat-610379.rar"/>
+          <jca:activationSpec>
+            <jca:property name="destinationType" value="javax.jms.Queue"/>
+            <jca:property name="destination" value="OrderQueue"/>
+          </jca:activationSpec>
+        </jca:inboundConnection>
+        <jca:inboundInteraction>
+          <jca:listener>javax.jms.MessageListener</jca:listener>
+          <jca:endpoint type="org.switchyard.component.jca.endpoint.JMSEndpoint"/>
+          <jca:transacted>true</jca:transacted>
+        </jca:inboundInteraction>
+      </jca:binding.jca>
+    </sca:service>
+    <sca:reference name="ShippingReference" multiplicity="1..1" promote="OrderService/ShippingReference">
+      <jca:binding.jca>
+        <jca:outboundConnection>
+          <jca:resourceAdapter name="activemq-rar-5.9.0.redhat-610379.rar"/>
+          <jca:connection jndiName="java:/activemq/ConnectionFactory"/>
+        </jca:outboundConnection>
+        <jca:outboundInteraction>
+          <jca:processor type="org.switchyard.component.jca.processor.JMSProcessor">
+            <jca:property name="messageType" value="Text"/>
+            <jca:property name="destination" value="ShippingQueue"/>
+          </jca:processor>
+        </jca:outboundInteraction>
+      </jca:binding.jca>
+    </sca:reference>
+    <sca:reference name="FillingStockReference" multiplicity="1..1" promote="OrderService/FillingStockReference">
+      <jca:binding.jca>
+        <jca:outboundConnection>
+          <jca:resourceAdapter name="activemq-rar-5.9.0.redhat-610379.rar"/>
+          <jca:connection jndiName="java:/activemq/ConnectionFactory"/>
+        </jca:outboundConnection>
+        <jca:outboundInteraction>
+          <jca:processor type="org.switchyard.component.jca.processor.JMSProcessor">
+            <jca:property name="messageType" value="Text"/>
+            <jca:property name="destination" value="FillingStockQueue"/>
+          </jca:processor>
+        </jca:outboundInteraction>
+      </jca:binding.jca>
+    </sca:reference>
+    <sca:component name="OrderService">
+      <bean:implementation.bean class="org.switchyard.quickstarts.jca.outbound.OrderServiceBean"/>
+      <sca:service name="OrderService">
+        <sca:interface.java interface="org.switchyard.quickstarts.jca.outbound.OrderService"/>
+      </sca:service>
+      <sca:reference name="ShippingReference">
+        <sca:interface.java interface="org.switchyard.quickstarts.jca.outbound.OrderService"/>
+      </sca:reference>
+      <sca:reference name="FillingStockReference">
+        <sca:interface.java interface="org.switchyard.quickstarts.jca.outbound.OrderService"/>
+      </sca:reference>
+    </sca:component>
+    <sca:component name="EchoServiceBean">
+      <bean:implementation.bean class="org.switchyard.quickstarts.jca.outbound.EchoServiceBean"/>
+      <sca:service name="EchoService">
+        <sca:interface.java interface="org.switchyard.quickstarts.jca.outbound.EchoService"/>
+      </sca:service>
+    </sca:component>
+    <sca:service name="EchoService" promote="EchoServiceBean/EchoService">
+      <sca:interface.java interface="org.switchyard.quickstarts.jca.outbound.EchoService"/>
+      <jms:binding.jms name="jmsE">
+        <operationSelector operationName="echo"/>
+        <jms:queue>queue/Echo.in</jms:queue>
+        <jms:connectionFactory>#activemq/ConnectionFactory</jms:connectionFactory>
+        <jms:replyTo>queue/Echo.out</jms:replyTo>
+        <jms:transactionManager>#jtaTransactionManager</jms:transactionManager>
+      </jms:binding.jms>
+    </sca:service>
+    <sca:component name="EchoClientServiceBean">
+      <bean:implementation.bean class="org.switchyard.quickstarts.jca.outbound.EchoClientServiceBean"/>
+      <sca:service name="EchoClientService">
+        <sca:interface.java interface="org.switchyard.quickstarts.jca.outbound.EchoClientService"/>
+      </sca:service>
+      <sca:reference name="EchoReference">
+        <sca:interface.java interface="org.switchyard.quickstarts.jca.outbound.EchoReference"/>
+      </sca:reference>
+    </sca:component>
+    <sca:service name="EchoClientService" promote="EchoClientServiceBean/EchoClientService">
+      <sca:interface.java interface="org.switchyard.quickstarts.jca.outbound.EchoClientService"/>
+      <resteasy:binding.rest name="restEcho">
+        <resteasy:interfaces>org.switchyard.quickstarts.jca.outbound.EchoResource</resteasy:interfaces>
+        <resteasy:contextPath>echo</resteasy:contextPath>
+      </resteasy:binding.rest>
+    </sca:service>
+    <sca:reference name="EchoReference" multiplicity="0..1">
+      <sca:interface.java interface="org.switchyard.quickstarts.jca.outbound.EchoReference"/>
+      <jms:binding.jms name="echoReference">
+        <jms:queue>queue/Echo.in</jms:queue>
+        <jms:connectionFactory>#activemq/ConnectionFactory</jms:connectionFactory>
+        <jms:replyTo>queue/Echo.out</jms:replyTo>
+      </jms:binding.jms>
+    </sca:reference>
+  </sca:composite>
 </switchyard>

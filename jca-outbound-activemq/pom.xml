@@ -35,6 +35,14 @@
             <artifactId>switchyard-plugin</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.switchyard.components</groupId>
+            <artifactId>switchyard-component-http</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.switchyard.components</groupId>
+            <artifactId>switchyard-component-resteasy</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.switchyard</groupId>
             <artifactId>switchyard-test</artifactId>
             <scope>test</scope>
@@ -67,6 +75,26 @@
             <artifactId>arquillian-junit-container</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+        	<groupId>org.switchyard.components</groupId>
+        	<artifactId>switchyard-component-bean</artifactId>
+        </dependency>
+        <dependency>
+        	<groupId>org.switchyard</groupId>
+        	<artifactId>switchyard-api</artifactId>
+        </dependency>
+        <dependency>
+        	<groupId>org.switchyard</groupId>
+        	<artifactId>switchyard-transform</artifactId>
+        </dependency>
+        <dependency>
+        	<groupId>org.switchyard</groupId>
+        	<artifactId>switchyard-validate</artifactId>
+        </dependency>
+        <dependency>
+        	<groupId>org.switchyard.components</groupId>
+        	<artifactId>switchyard-component-camel-jms</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <finalName>${project.artifactId}</finalName>
@@ -81,7 +109,13 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
+            <configuration>
+            	<scannerClassNames>
+            		<param>
+            			org.switchyard.transform.config.model.TransformSwitchYardScanner
+            		</param>
+            	</scannerClassNames>
+            </configuration></plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
