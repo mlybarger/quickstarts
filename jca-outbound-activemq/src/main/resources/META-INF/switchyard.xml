@@ -58,22 +58,6 @@
         <sca:interface.java interface="org.switchyard.quickstarts.jca.outbound.OrderService"/>
       </sca:reference>
     </sca:component>
-    <sca:component name="EchoServiceBean">
-      <bean:implementation.bean class="org.switchyard.quickstarts.jca.outbound.EchoServiceBean"/>
-      <sca:service name="EchoService">
-        <sca:interface.java interface="org.switchyard.quickstarts.jca.outbound.EchoService"/>
-      </sca:service>
-    </sca:component>
-    <sca:service name="EchoService" promote="EchoServiceBean/EchoService">
-      <sca:interface.java interface="org.switchyard.quickstarts.jca.outbound.EchoService"/>
-      <jms:binding.jms name="jmsE">
-        <operationSelector operationName="echo"/>
-        <jms:queue>queue/Echo.in</jms:queue>
-        <jms:connectionFactory>#activemq/ConnectionFactory</jms:connectionFactory>
-        <jms:replyTo>queue/Echo.out</jms:replyTo>
-        <jms:transactionManager>#jtaTransactionManager</jms:transactionManager>
-      </jms:binding.jms>
-    </sca:service>
     <sca:component name="EchoClientServiceBean">
       <bean:implementation.bean class="org.switchyard.quickstarts.jca.outbound.EchoClientServiceBean"/>
       <sca:service name="EchoClientService">
@@ -93,10 +77,57 @@
     <sca:reference name="EchoReference" multiplicity="0..1">
       <sca:interface.java interface="org.switchyard.quickstarts.jca.outbound.EchoReference"/>
       <jms:binding.jms name="echoReference">
+        <jms:queue>queue/Echo.proxy.in</jms:queue>
+        <jms:connectionFactory>#activemq/ConnectionFactory</jms:connectionFactory>
+        <jms:replyTo>queue/Echo.proxy.out</jms:replyTo>
+        <jms:transacted>true</jms:transacted>
+        <jms:transactionManager>#jtaTransactionManager</jms:transactionManager>
+      </jms:binding.jms>
+    </sca:reference>
+    <sca:component name="EchoServiceBean">
+      <bean:implementation.bean class="org.switchyard.quickstarts.jca.outbound.EchoServiceBean"/>
+      <sca:service name="EchoService">
+        <sca:interface.java interface="org.switchyard.quickstarts.jca.outbound.EchoService"/>
+      </sca:service>
+    </sca:component>
+    <sca:service name="EchoService" promote="EchoServiceBean/EchoService">
+      <sca:interface.java interface="org.switchyard.quickstarts.jca.outbound.EchoService"/>
+      <jms:binding.jms name="echoProxyService">
+        <operationSelector operationName="echo"/>
+        <jms:queue>queue/Echo.in</jms:queue>
+        <jms:connectionFactory>#activemq/ConnectionFactory</jms:connectionFactory>
+        <jms:replyTo>queue/Echo.out</jms:replyTo>
+      </jms:binding.jms>
+    </sca:service>
+    <sca:component name="EchoProxyServiceBean">
+      <bean:implementation.bean class="org.switchyard.quickstarts.jca.outbound.EchoProxyServiceBean"/>
+      <sca:service name="EchoProxyService">
+        <sca:interface.java interface="org.switchyard.quickstarts.jca.outbound.EchoProxyService"/>
+      </sca:service>
+      <sca:reference name="EchoProxyServiceReference">
+        <sca:interface.java interface="org.switchyard.quickstarts.jca.outbound.EchoProxyServiceReference"/>
+      </sca:reference>
+    </sca:component>
+    <sca:service name="EchoProxyService" promote="EchoProxyServiceBean/EchoProxyService">
+      <sca:interface.java interface="org.switchyard.quickstarts.jca.outbound.EchoProxyService"/>
+      <jms:binding.jms name="echoProxyService">
+        <jms:queue>queue/Echo.proxy.in</jms:queue>
+        <jms:connectionFactory>#activemq/ConnectionFactory</jms:connectionFactory>
+        <jms:replyTo>queue/Echo.proxy.out</jms:replyTo>
+      </jms:binding.jms>
+    </sca:service>
+    <sca:reference name="EchoProxyServiceReference" multiplicity="0..1" promote="EchoProxyServiceBean/EchoProxyServiceReference">
+      <sca:interface.java interface="org.switchyard.quickstarts.jca.outbound.EchoProxyServiceReference"/>
+      <jms:binding.jms name="echoProxyServiceReference">
         <jms:queue>queue/Echo.in</jms:queue>
         <jms:connectionFactory>#activemq/ConnectionFactory</jms:connectionFactory>
         <jms:replyTo>queue/Echo.out</jms:replyTo>
       </jms:binding.jms>
     </sca:reference>
   </sca:composite>
+  <domain>
+    <properties>
+      <property name="org.switchyard.handlers.messageTrace.enabled" value="false"/>
+    </properties>
+  </domain>
 </switchyard>

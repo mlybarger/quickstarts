@@ -14,7 +14,11 @@ public class EchoClientServiceBean implements EchoClientService {
 
 	@Override
 	public String echo(String message) {
-		return echoReference.process(message);
+		System.out.println("EchoClientServiceBean echo() :" + message);
+		String ret = echoReference.process(message);
+		System.out.println("EchoClientServiceBean echo() :" + ret);
+		
+		return ret;
 	}
 
 }
