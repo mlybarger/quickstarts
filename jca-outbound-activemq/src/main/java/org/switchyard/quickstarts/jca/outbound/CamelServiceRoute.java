@@ -10,6 +10,7 @@ public class CamelServiceRoute extends RouteBuilder {
 	public void configure() {
 		from("switchyard://CamelService")
 			.log("Received message for 'CamelService' : ${body}")
+			.process(new CamelEchoProcessor())
 			.to("switchyard://EchoClientService");
 	}
 

@@ -104,6 +104,10 @@ public class RESTEasyBindingTest {
         // Destroy our inventory
         response = http.sendString(BASE_URL + "/inventory/remove", "", HTTPMixIn.HTTP_OPTIONS);
         Assert.assertEquals(SUCCESS, response);
+        
+        response = http.sendString("http://localhost:8081/echo", "INPUT", HTTPMixIn.HTTP_POST);
+        Assert.assertEquals("input", response);
+        
     }
 
     private static String BASE_URL = "http://localhost:8081/rest-binding";
