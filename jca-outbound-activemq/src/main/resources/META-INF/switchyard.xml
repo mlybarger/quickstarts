@@ -74,16 +74,6 @@
         <resteasy:contextPath>echo</resteasy:contextPath>
       </resteasy:binding.rest>
     </sca:service>
-    <sca:reference name="EchoReference" multiplicity="0..1">
-      <sca:interface.java interface="org.switchyard.quickstarts.jca.outbound.EchoReference"/>
-      <jms:binding.jms name="echoReference">
-        <jms:queue>queue/Echo.proxy.in</jms:queue>
-        <jms:connectionFactory>#activemq/ConnectionFactory</jms:connectionFactory>
-        <jms:replyTo>queue/Echo.proxy.out</jms:replyTo>
-        <jms:transacted>true</jms:transacted>
-        <jms:transactionManager>#jtaTransactionManager</jms:transactionManager>
-      </jms:binding.jms>
-    </sca:reference>
     <sca:component name="EchoServiceBean">
       <bean:implementation.bean class="org.switchyard.quickstarts.jca.outbound.EchoServiceBean"/>
       <sca:service name="EchoService">
@@ -142,6 +132,16 @@
         <resteasy:contextPath>camel</resteasy:contextPath>
       </resteasy:binding.rest>
     </sca:service>
+    <sca:reference name="EchoReference" multiplicity="0..1" promote="EchoClientServiceBean/EchoReference">
+      <sca:interface.java interface="org.switchyard.quickstarts.jca.outbound.EchoReference"/>
+      <jms:binding.jms name="echoReference">
+        <jms:queue>queeu/Echo.proxy.in</jms:queue>
+        <jms:connectionFactory>#activemq/ConnectionFactory</jms:connectionFactory>
+        <jms:replyTo>queue/Echo.proxy.out</jms:replyTo>
+        <jms:transacted>true</jms:transacted>
+        <jms:transactionManager>#jtaTransactionManager</jms:transactionManager>
+      </jms:binding.jms>
+    </sca:reference>
   </sca:composite>
   <domain>
     <properties>
