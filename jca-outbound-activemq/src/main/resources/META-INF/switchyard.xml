@@ -1,63 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <switchyard xmlns="urn:switchyard-config:switchyard:1.0" xmlns:bean="urn:switchyard-component-bean:config:1.0" xmlns:camel="urn:switchyard-component-camel:config:1.0" xmlns:jca="urn:switchyard-component-jca:config:1.0" xmlns:jms="urn:switchyard-component-camel-jms:config:1.0" xmlns:resteasy="urn:switchyard-component-resteasy:config:1.0" xmlns:sca="http://docs.oasis-open.org/ns/opencsa/sca/200912" name="switchyard-quickstart-jca-outbound-activemq">
   <sca:composite name="jca-outbound-activemq" targetNamespace="urn:switchyard-quickstart:jca-outbound-activemq:0.1.0">
-    <sca:service name="OrderService" promote="OrderService/OrderService">
-      <jca:binding.jca name="Foo">
-        <operationSelector operationName="process"/>
-        <jca:inboundConnection>
-          <jca:resourceAdapter name="activemq-rar-5.9.0.redhat-610379.rar"/>
-          <jca:activationSpec>
-            <jca:property name="destinationType" value="javax.jms.Queue"/>
-            <jca:property name="destination" value="OrderQueue"/>
-          </jca:activationSpec>
-        </jca:inboundConnection>
-        <jca:inboundInteraction>
-          <jca:listener>javax.jms.MessageListener</jca:listener>
-          <jca:endpoint type="org.switchyard.component.jca.endpoint.JMSEndpoint"/>
-          <jca:transacted>true</jca:transacted>
-        </jca:inboundInteraction>
-      </jca:binding.jca>
-    </sca:service>
-    <sca:reference name="ShippingReference" multiplicity="1..1" promote="OrderService/ShippingReference">
-      <jca:binding.jca>
-        <jca:outboundConnection>
-          <jca:resourceAdapter name="activemq-rar-5.9.0.redhat-610379.rar"/>
-          <jca:connection jndiName="java:/activemq/ConnectionFactory"/>
-        </jca:outboundConnection>
-        <jca:outboundInteraction>
-          <jca:processor type="org.switchyard.component.jca.processor.JMSProcessor">
-            <jca:property name="messageType" value="Text"/>
-            <jca:property name="destination" value="ShippingQueue"/>
-          </jca:processor>
-        </jca:outboundInteraction>
-      </jca:binding.jca>
-    </sca:reference>
-    <sca:reference name="FillingStockReference" multiplicity="1..1" promote="OrderService/FillingStockReference">
-      <jca:binding.jca>
-        <jca:outboundConnection>
-          <jca:resourceAdapter name="activemq-rar-5.9.0.redhat-610379.rar"/>
-          <jca:connection jndiName="java:/activemq/ConnectionFactory"/>
-        </jca:outboundConnection>
-        <jca:outboundInteraction>
-          <jca:processor type="org.switchyard.component.jca.processor.JMSProcessor">
-            <jca:property name="messageType" value="Text"/>
-            <jca:property name="destination" value="FillingStockQueue"/>
-          </jca:processor>
-        </jca:outboundInteraction>
-      </jca:binding.jca>
-    </sca:reference>
-    <sca:component name="OrderService">
-      <bean:implementation.bean class="org.switchyard.quickstarts.jca.outbound.OrderServiceBean"/>
-      <sca:service name="OrderService">
-        <sca:interface.java interface="org.switchyard.quickstarts.jca.outbound.OrderService"/>
-      </sca:service>
-      <sca:reference name="ShippingReference">
-        <sca:interface.java interface="org.switchyard.quickstarts.jca.outbound.OrderService"/>
-      </sca:reference>
-      <sca:reference name="FillingStockReference">
-        <sca:interface.java interface="org.switchyard.quickstarts.jca.outbound.OrderService"/>
-      </sca:reference>
-    </sca:component>
     <sca:component name="EchoClientServiceBean">
       <bean:implementation.bean class="org.switchyard.quickstarts.jca.outbound.EchoClientServiceBean"/>
       <sca:service name="EchoClientService">
@@ -135,7 +78,7 @@
     <sca:reference name="EchoReference" multiplicity="0..1" promote="EchoClientServiceBean/EchoReference">
       <sca:interface.java interface="org.switchyard.quickstarts.jca.outbound.EchoReference"/>
       <jms:binding.jms name="echoReference">
-        <jms:queue>queeu/Echo.proxy.in</jms:queue>
+        <jms:queue>queue/Echo.proxy.in</jms:queue>
         <jms:connectionFactory>#activemq/ConnectionFactory</jms:connectionFactory>
         <jms:replyTo>queue/Echo.proxy.out</jms:replyTo>
         <jms:transacted>true</jms:transacted>
